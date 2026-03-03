@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Anfahrschaden EÜ</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; font-size: 16px; background: #fff; }
+.hdr { background: #1a56db; color: #fff; padding: 14px 16px 12px; }
+.hdr-sub { font-size: 11px; opacity: .7; }
+.hdr-title { font-size: 18px; font-weight: bold; margin-top: 2px; }
+.pbar { height: 5px; background: rgba(255,255,255,.3); border-radius: 3px; margin-top: 10px; }
+.pfill { height: 100%; background: #fff; border-radius: 3px; transition: width .3s; }
+.plbl { font-size: 11px; opacity: .65; margin-top: 5px; }
+.pg { display: none; padding: 20px 16px 60px; }
+.pg.on { display: block; }
+.tag { background: #dbeafe; color: #1d4ed8; font-size: 11px; font-weight: bold;
+       text-transform: uppercase; letter-spacing: .06em; padding: 3px 10px;
+       border-radius: 6px; display: inline-block; margin-bottom: 10px; }
+h2 { font-size: 20px; color: #111; margin-bottom: 18px; }
+.info { background: #dbeafe; border-left: 4px solid #1a56db; border-radius: 8px;
+        padding: 12px 14px; font-size: 14px; color: #1e3a6e; line-height: 1.55; margin-bottom: 20px; }
+.hero { background: linear-gradient(135deg,#1a56db,#0f3d8c); border-radius: 16px;
+        padding: 22px 18px; margin-bottom: 18px; color: #fff; }
+.hero-icon { font-size: 36px; margin-bottom: 10px; }
+.hero-t { font-size: 18px; font-weight: bold; margin-bottom: 8px; line-height: 1.3; }
+.hero-p { font-size: 14px; opacity: .85; line-height: 1.5; }
+.opt { display: flex; align-items: center; gap: 14px; padding: 16px; margin-bottom: 10px;
+       border: 2px solid #e5e7eb; border-radius: 12px; background: #fff; cursor: pointer;
+       -webkit-tap-highlight-color: transparent; touch-action: manipulation; min-height: 56px; }
+.opt.on { border-color: #1a56db; background: #eff6ff; }
+.circle { width: 22px; height: 22px; border: 2px solid #9ca3af; border-radius: 50%;
+          flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.opt.on .circle { border-color: #1a56db; background: #1a56db; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: #fff; display: none; }
+.opt.on .dot { display: block; }
+.square { width: 22px; height: 22px; border: 2px solid #9ca3af; border-radius: 6px;
+          flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+          font-size: 13px; color: transparent; }
+.opt.on .square { border-color: #1a56db; background: #1a56db; color: #fff; }
+.olbl { font-size: 15px; font-weight: 600; color: #111; }
+.btn { display: block; width: 100%; padding: 17px; border: none; border-radius: 12px;
+       margin-bottom: 10px; font-size: 17px; font-weight: bold; font-family: Arial, sans-serif;
+       cursor: pointer; text-align: center; touch-action: manipulation;
+       -webkit-tap-highlight-color: transparent; min-height: 56px; }
+.btn:active { opacity: .75; }
+.blue { background: #1a56db; color: #fff; }
+.green { background: #16a34a; color: #fff; }
+.gray { background: #f3f4f6; color: #1f2937; }
+.badge { display: inline-block; padding: 8px 18px; border-radius: 100px;
+         font-size: 14px; font-weight: bold; margin-bottom: 14px; border: 2px solid; }
+.bred { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+.byellow { background: #fffbeb; color: #d97706; border-color: #fde68a; }
+.bgreen { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
+.card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+.ctitle { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: .06em; color: #9ca3af; margin-bottom: 10px; }
+.mrow { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+.mrow:last-child { border-bottom: none; }
+.mtxt { font-size: 14px; color: #111; line-height: 1.4; }
+.mtag { display: inline-block; font-size: 10px; font-weight: bold; padding: 2px 7px;
+        border-radius: 20px; margin-top: 3px; text-transform: uppercase; }
+.tred { background: #fef2f2; color: #dc2626; }
+.tyellow { background: #fffbeb; color: #d97706; }
+.tblue { background: #eff6ff; color: #1d4ed8; }
+.flbl { font-size: 13px; font-weight: bold; color: #4b5563; margin-bottom: 8px; }
+textarea { width: 100%; border: 2px solid #e5e7eb; border-radius: 10px; padding: 12px;
+           font-family: Arial, sans-serif; font-size: 15px; min-height: 100px;
+           outline: none; resize: vertical; margin-bottom: 16px; }
+textarea:focus { border-color: #1a56db; }
+.pzone { border: 2px dashed #d1d5db; border-radius: 12px; padding: 22px 16px;
+         text-align: center; margin-bottom: 12px; background: #fafafa;
+         position: relative; overflow: hidden; }
+.pzone input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+.pz-i { font-size: 34px; margin-bottom: 6px; }
+.pz-t { font-size: 15px; font-weight: bold; color: #4b5563; }
+.pz-s { font-size: 12px; color: #9ca3af; margin-top: 3px; }
+.pgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
+.pthumb { aspect-ratio: 1; border-radius: 8px; overflow: hidden; position: relative; background: #eee; }
+.pthumb img { width: 100%; height: 100%; object-fit: cover; }
+.pdel { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px;
+        background: rgba(0,0,0,.65); color: #fff; border: none; border-radius: 50%;
+        font-size: 16px; cursor: pointer; touch-action: manipulation; padding: 0; }
+.stbl { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 14px; }
+.stbl td { padding: 9px 0; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+.stbl td:first-child { color: #6b7280; width: 38%; padding-right: 10px; }
+.stbl td:last-child { color: #111; font-weight: bold; }
+.sep { height: 1px; background: #f3f4f6; margin: 14px 0; }
+.err { background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:10px 14px;font-size:13px;color:#dc2626;margin-bottom:12px;display:none; }
+.err.on { display:block; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.shake { animation:shake .3s ease; }
+
+/* Spinner overlay */
+#spinner { display:none; position:fixed; inset:0; background:rgba(255,255,255,.9);
+align-items:center; justify-content:center; flex-direction:column; z-index:999; }
+#spinner.on { display:flex; }
+.spin-ring { width:52px; height:52px; border:5px solid #dbeafe; border-top-color:#1a56db;
+border-radius:50%; animation:spin .8s linear infinite; margin-bottom:16px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+#spin-txt { font-size:15px; color:#1a56db; font-weight:bold; }
+</style>
+
+</head>
+<body>
+
+<div id="spinner"><div class="spin-ring"></div><div id="spin-txt">PDF wird erstellt…</div></div>
+
+<div class="hdr">
+  <div class="hdr-sub">DB InfraGO · ALV KIB</div>
+  <div class="hdr-title" id="HT">Erstbeurteilung</div>
+  <div class="pbar"><div class="pfill" id="PF" style="width:0%"></div></div>
+  <div class="plbl" id="PL">Schritt 0 / 5</div>
+</div>
+
+<div class="pg on" id="p0">
+  <div class="hero">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <div class="hero-t" style="margin-bottom:0;">Erstbeurteilung Anfahrschaden Eisenbahnüberführung</div>
+      <div style="font-size:32px;flex-shrink:0;">&#128679;</div>
+    </div>
+    <div class="hero-p" style="margin-top:8px;">Unterstützt den Notfallmanager bei der strukturierten Erstbeurteilung von Anfahrschäden.</div>
+  </div>
+  <div class="info">Ziel ist die Gefahrenabwehr sowie die verantwortbare Aufrechterhaltung bzw. zügige Wiederaufnahme des Betriebs. Die fachliche Nachprüfung erfolgt durch den ALV KIB.</div>
+  <button class="btn blue" onclick="show(1)">Einsatz starten &#8594;</button>
+
+  <div style="margin-top:16px;padding:14px;background:#f9fafb;border-radius:12px;border:1px solid #e5e7eb;font-size:12px;color:#6b7280;line-height:1.6;">
+    <strong style="color:#111;">Hinweis</strong><br>
+    Diese Web-App ist ein privates Hilfsmittel und steht in keiner Verbindung zur DB InfraGO AG, der Deutschen Bahn AG oder einem ihrer Tochterunternehmen.<br><br>
+    Entwickelt von
+    <a href="https://www.linkedin.com/in/hasankuzu/" target="_blank" style="color:#0a66c2;text-decoration:none;font-weight:bold;display:inline-flex;align-items:center;gap:5px;vertical-align:middle;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2" style="flex-shrink:0"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      Hasan Kuzu
+    </a>
+  </div>
+</div>
+
+<div class="pg" id="p1">
+  <div class="tag">Schritt 1 · Klassifizierung</div>
+  <h2>Bauwerksart</h2>
+  <div class="opt" id="r0" onclick="radio('bw',['r0','r1','r2'],'Beton / WIB',this)">
+    <div class="circle"><div class="dot"></div></div><span class="olbl">Beton / WIB</span>
+  </div>
+  <div class="opt" id="r1" onclick="radio('bw',['r0','r1','r2'],'Stahl',this)">
+    <div class="circle"><div class="dot"></div></div><span class="olbl">Stahl</span>
+  </div>
+  <div class="opt" id="r2" onclick="radio('bw',['r0','r1','r2'],'Gewölbe',this)">
+    <div class="circle"><div class="dot"></div></div><span class="olbl">Gewölbe</span>
+  </div>
+  <div class="err" id="e1">Bitte Bauwerksart auswaehlen.</div>
+  <button class="btn blue" onclick="goTo2()">Weiter &#8594;</button>
+  <button class="btn gray" onclick="show(0)">&#8592; Zurück</button>
+</div>
+
+<div class="pg" id="p2">
+  <div class="tag">Schritt 2 · Schadensbild</div>
+  <h2>Welche Schäden sind sichtbar?</h2>
+  <div class="opt" id="c0" onclick="chk('c0','Kratz- / Schleifspuren',this)">
+    <div class="square">&#10003;</div><span class="olbl">Kratz- / Schleifspuren</span>
+  </div>
+  <div class="opt" id="c1" onclick="chk('c1','Kleine Abplatzungen',this)">
+    <div class="square">&#10003;</div><span class="olbl">Kleine Abplatzungen</span>
+  </div>
+  <div class="opt" id="c2" onclick="chk('c2','Größere Abplatzungen',this)">
+    <div class="square">&#10003;</div><span class="olbl">Größere Abplatzungen</span>
+  </div>
+  <div class="opt" id="c3" onclick="chk('c3','Freiliegende Bewehrung',this)">
+    <div class="square">&#10003;</div><span class="olbl">Freiliegende Bewehrung</span>
+  </div>
+  <div class="opt" id="c4" onclick="chk('c4','Verformungen',this)">
+    <div class="square">&#10003;</div><span class="olbl">Verformungen</span>
+  </div>
+  <div class="opt" id="c5" onclick="chk('c5','Auffällige Rissbildungen',this)">
+    <div class="square">&#10003;</div><span class="olbl">Auffällige Rissbildungen</span>
+  </div>
+  <button class="btn blue" onclick="show(3)">Weiter &#8594;</button>
+  <button class="btn gray" onclick="show(1)">&#8592; Zurück</button>
+</div>
+
+<div class="pg" id="p3">
+  <div class="tag">Schritt 3 · Gleislage</div>
+  <h2>Gleislage &amp; Bewertung</h2>
+  <div class="opt" id="g0" onclick="radio('gl',['g0','g1'],'Unauffällig',this)">
+    <div class="circle"><div class="dot"></div></div><span class="olbl">Unauffällig</span>
+  </div>
+  <div class="opt" id="g1" onclick="radio('gl',['g0','g1'],'Auffällig',this)">
+    <div class="circle"><div class="dot"></div></div><span class="olbl">Auffällig</span>
+  </div>
+  <div class="err" id="e3">Bitte Gleislage auswaehlen.</div>
+  <button class="btn blue" onclick="goResult()">Bewertung durchführen &#8594;</button>
+  <button class="btn gray" onclick="show(2)">&#8592; Zurück</button>
+</div>
+
+<div class="pg" id="p4">
+  <div class="tag">Schritt 4 · Ergebnis</div>
+  <h2>Bewertungsergebnis</h2>
+  <div id="RA"></div>
+  <div class="sep"></div>
+  <button class="btn blue" onclick="show(5)">Dokumentation erfassen &#8594;</button>
+  <button class="btn gray" onclick="show(3)">&#8592; Zurück</button>
+</div>
+
+<div class="pg" id="p5">
+  <div class="tag">Schritt 5 · Dokumentation</div>
+  <h2>Notizen &amp; Fotos</h2>
+  <div class="flbl">Freitext-Notizen</div>
+  <textarea id="NT" placeholder="Ergänzende Beobachtungen, Besonderheiten, Hinweise für ALV KIB …"></textarea>
+  <div class="flbl">Fotos</div>
+  <div class="pzone">
+    <input type="file" accept="image/*" multiple onchange="addPics(this)">
+    <div class="pz-i">&#128247;</div>
+    <div class="pz-t">Foto aufnehmen oder auswählen</div>
+    <div class="pz-s">Kamera oder Galerie – mehrere möglich</div>
+  </div>
+  <div class="pgrid" id="PG"></div>
+  <button class="btn blue" onclick="show(6)">Weiter zur Zusammenfassung &#8594;</button>
+  <button class="btn gray" onclick="show(4)">&#8592; Zurück</button>
+</div>
+
+<div class="pg" id="p6">
+  <div class="tag">Zusammenfassung &amp; Export</div>
+  <h2>Bericht</h2>
+  <div style="font-size:12px;color:#9ca3af;margin-bottom:12px;" id="RTS"></div>
+  <div class="card">
+    <div class="ctitle">Erfasste Daten</div>
+    <table class="stbl" id="ST"></table>
+  </div>
+
+  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px;margin-bottom:16px;font-size:14px;color:#166534;line-height:1.7;">
+    <strong>So weiterleiten:</strong><br>
+    1. PDF anzeigen &#8594; oben Teilen &#8594; &bdquo;In Dateien sichern&ldquo;<br>
+    2. Mail öffnen &#8594; PDF aus Dateien anhängen &amp; senden
+  </div>
+
+<button class="btn green" id="PB" onclick="makePDF()">📄 PDF anzeigen</button>
+<button class="btn blue" id="MB" onclick="openMail()">✉ Mail öffnen</button>
+<button class="btn gray" onclick="show(5)">← Zurück / Fotos ergänzen</button>
+<button class="btn gray" onclick="neu()">🔄 Neuen Einsatz starten</button>
+
+</div>
+
+<script>
+var D = { bw: null, sd: [], gl: null, res: null, pics: [] };
+var TITLES = ['Erstbeurteilung','Bauwerksart','Schadensbild','Gleislage','Ergebnis','Dokumentation','Zusammenfassung'];
+
+function show(n) {
+  for (var i = 0; i <= 6; i++) {
+    var el = document.getElementById('p' + i);
+    if (el) el.className = i === n ? 'pg on' : 'pg';
+  }
+  document.getElementById('HT').textContent = TITLES[n];
+  var pct = n === 0 ? 0 : Math.round(Math.min(n,5)/5*100);
+  document.getElementById('PF').style.width = pct + '%';
+  document.getElementById('PL').textContent = 'Schritt ' + (n===0?'0':Math.min(n,5)) + ' / 5';
+  window.scrollTo(0,0);
+  if (n === 6) buildSum();
+}
+
+function radio(key, ids, val, clicked) {
+  D[key] = val;
+  for (var i = 0; i < ids.length; i++) {
+    var el = document.getElementById(ids[i]);
+    if (el) el.className = 'opt';
+  }
+  clicked.className = 'opt on';
+}
+
+function chk(id, val, el) {
+  var idx = D.sd.indexOf(val);
+  if (idx === -1) { D.sd.push(val); el.className = 'opt on'; }
+  else { D.sd.splice(idx,1); el.className = 'opt'; }
+}
+
+var CFG = {
+  S3: { bc:'bred', lbl:'Szenario 3 - Betrieb entsprechend behandeln',
+        m:[{t:'Betrieb ist entsprechend zu behandeln',g:'SOFORT',c:'tred'},
+           {t:'ALV KIB ist unverzüglich einzubinden',g:'SOFORT',c:'tred'},
+           {t:'Fotodokumentation (Übersicht und Details)',g:'DOKUMENTIEREN',c:'tblue'},
+           {t:'Kurzbeschreibung des Schadensbildes erstellen',g:'DOKUMENTIEREN',c:'tblue'}]},
+  S12: { bc:'bgreen', lbl:'Szenario 1/2 - Betrieb kann aufrechterhalten werden',
+        m:[{t:'Betrieb kann aufrechterhalten bzw. wieder aufgenommen werden',g:'OK',c:'tblue'},
+           {t:'Fotodokumentation (Übersicht und Details)',g:'DOKUMENTIEREN',c:'tblue'},
+           {t:'Kurzbeschreibung des Schadensbildes erstellen',g:'DOKUMENTIEREN',c:'tblue'},
+           {t:'Information des ALV KIB zur zeitnahen Nachprüfung',g:'DOKUMENTIEREN',c:'tblue'}]}
+};
+
+function goTo2() {
+  if (!D.bw) {
+    var e=document.getElementById('e1');
+    e.className='err on shake';
+    setTimeout(function(){e.className='err on';},400);
+    return;
+  }
+  document.getElementById('e1').className='err';
+  show(2);
+}
+
+function goResult() {
+  if (!D.gl) {
+    var e=document.getElementById('e3');
+    e.className='err on shake';
+    setTimeout(function(){e.className='err on';},400);
+    return;
+  }
+  document.getElementById('e3').className='err';
+  doResult();
+}
+
+function doResult() {
+  var s = D.sd;
+  var s3list = ['Größere Abplatzungen','Freiliegende Bewehrung','Verformungen','Auffällige Rissbildungen'];
+  var isS3 = false;
+  for (var i=0;i<s3list.length;i++) if (s.indexOf(s3list[i])!==-1){isS3=true;break;}
+  if (D.gl==='Auffällig'||isS3) D.res='S3';
+  else D.res='S12';
+
+  var cfg = CFG[D.res];
+  var h = '<div class="badge '+cfg.bc+'">'+cfg.lbl+'</div>';
+  if (D.bw === 'Stahl') {
+    h += '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:13px;color:#92400e;">&#9888; <strong>Stahlbrücke:</strong> Erhöhte Aufmerksamkeit erforderlich. Sorgfältige Sichtprüfung auf Verformungen und Risse.</div>';
+  }
+  h += '<div class="card"><div class="ctitle">Empfohlene Maßnahmen (gem. Handlungsanweisung)</div>';
+  for (var j=0;j<cfg.m.length;j++) {
+    h += '<div class="mrow"><div class="mtxt">'+cfg.m[j].t+'<br><span class="mtag '+cfg.m[j].c+'">'+cfg.m[j].g+'</span></div></div>';
+  }
+  h += '</div>';
+  h += '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:11px 13px;font-size:12px;color:#6b7280;line-height:1.6;">';
+  h += '<strong style="color:#111;">Hinweis:</strong> Der Notfallmanager trifft keine detaillierte fachtechnische Bewertung, sondern eine verantwortbare Erstentscheidung auf Grundlage sichtbarer Merkmale. Die fachliche Nachprüfung erfolgt durch den ALV KIB.';
+  h += '</div>';
+  document.getElementById('RA').innerHTML = h;
+  show(4);
+}
+
+function addPics(inp) {
+  for (var i=0;i<inp.files.length;i++) {
+    (function(f){
+      var r = new FileReader();
+      r.onload = function(e){ D.pics.push(e.target.result); drawGrid(); };
+      r.readAsDataURL(f);
+    })(inp.files[i]);
+  }
+  inp.value='';
+}
+
+function drawGrid() {
+  var h='';
+  for (var i=0;i<D.pics.length;i++) {
+    h+='<div class="pthumb"><img src="'+D.pics[i]+'"><button class="pdel" onclick="delPic('+i+')">&#215;</button></div>';
+  }
+  document.getElementById('PG').innerHTML=h;
+}
+
+function delPic(i){ D.pics.splice(i,1); drawGrid(); }
+
+function getTS(){
+  return new Date().toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+function buildSum(){
+  var t=getTS();
+  document.getElementById('RTS').textContent='Aufgenommen: '+t;
+  var cfg=CFG[D.res]||{};
+  var rows=[
+    ['Bauwerksart', D.bw||'-'],
+    ['Schadensbild', D.sd.length ? D.sd.join(', ') : 'Keine Schäden'],
+    ['Gleislage', D.gl||'-'],
+    ['Bewertung', cfg.lbl||'-'],
+    ['Fotos', D.pics.length+' Foto(s)'],
+    ['Notizen', document.getElementById('NT').value.trim()||'-']
+  ];
+  var h='';
+  for (var i=0;i<rows.length;i++) h+='<tr><td>'+rows[i][0]+'</td><td>'+rows[i][1]+'</td></tr>';
+  document.getElementById('ST').innerHTML=h;
+}
+
+// -- PDF (opens inline on iOS, that's normal) -------------
+function makePDF() {
+  var btn = document.getElementById('PB');
+  btn.disabled = true;
+  document.getElementById('spinner').className = 'on';
+  document.getElementById('spin-txt').textContent = 'PDF wird erstellt...';
+
+  if (window.jspdf && window.jspdf.jsPDF) { runPDF(btn); return; }
+  var s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  s.onload = function() { runPDF(btn); };
+  s.onerror = function() {
+    document.getElementById('spinner').className = '';
+    btn.disabled = false;
+    alert('PDF benötigt Internet. Bitte WLAN aktivieren.');
+  };
+  document.head.appendChild(s);
+}
+
+function runPDF(btn) {
+  setTimeout(function() {
+    try {
+      var t = getTS();
+      var cfg = CFG[D.res] || { lbl:'-', m:[] };
+      var nt = document.getElementById('NT').value.trim();
+      var jsPDF = window.jspdf.jsPDF;
+      var doc = new jsPDF({ unit:'mm', format:'a4' });
+      var ML=18, CW=174, PH=297, y=0;
+
+      function np(n) { if (y+n > PH-18) { doc.addPage(); y=18; } }
+
+      doc.setFillColor(26,86,219); doc.rect(0,0,210,20,'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(255,255,255);
+      doc.text('Anfahrschaden Eisenbahnübeführung', ML, 13);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(200,220,255);
+      doc.text(t, 192, 7, {align:'right'});
+      y = 28;
+
+      var bc={G:[220,38,38],E:[217,119,6],D2:[217,119,6],U:[22,163,74]};
+      var c=bc[D.res]||[100,100,100];
+      doc.setFillColor(c[0],c[1],c[2]); doc.roundedRect(ML,y,CW,11,3,3,'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(255,255,255);
+      doc.text(cfg.lbl, ML+CW/2, y+7.5, {align:'center'});
+      y+=18;
+
+      function sec(title) {
+        np(10); doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(26,86,219);
+        doc.text(title,ML,y); doc.setDrawColor(26,86,219); doc.setLineWidth(0.3);
+        doc.line(ML,y+2,ML+CW,y+2); y+=8;
+      }
+      function row(k,v) {
+        np(8); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+        doc.setTextColor(120,120,120); doc.text(k,ML,y);
+        doc.setTextColor(30,30,30); doc.setFont('helvetica','bold');
+        var ls=doc.splitTextToSize(String(v),CW-55);
+        doc.text(ls,ML+55,y); y+=Math.max(7,ls.length*5.5);
+      }
+
+      sec('BAUWERK & SCHADENSBILD');
+      row('Bauwerksart', D.bw||'-');
+      row('Gleislage', D.gl||'-');
+      row('Schadensbild', D.sd.length?D.sd.join(', '):'Keine Schäden'); y+=4;
+
+      sec('EMPFOHLENE MASSNAHMEN');
+      for (var i=0;i<cfg.m.length;i++) {
+        np(8); doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(30,30,30);
+        var ls=doc.splitTextToSize('- '+cfg.m[i].t+' ['+cfg.m[i].g+']',CW-8);
+        doc.text(ls,ML+4,y); y+=Math.max(7,ls.length*5.5);
+      }
+      y+=4;
+
+      sec('NOTIZEN');
+      doc.setFillColor(249,250,251);
+      var nl=doc.splitTextToSize(nt||'(Keine Notizen)',CW-6);
+      var nh=nl.length*5.5+8; np(nh+4);
+      doc.roundedRect(ML,y,CW,nh,2,2,'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(55,65,81);
+      doc.text(nl,ML+3,y+6); y+=nh+8;
+
+      if (D.pics.length>0) {
+        sec('FOTOS ('+D.pics.length+')');
+        var cols=3,gap=4,iw=(CW-gap*2)/3,ih=iw*0.75;
+        for (var j=0;j<D.pics.length;j++) {
+          var col=j%cols;
+          if (col===0&&j>0) y+=ih+8;
+          np(ih+10);
+          var px=ML+col*(iw+gap);
+          try {
+            var fmt=D.pics[j].indexOf('data:image/png')===0?'PNG':'JPEG';
+            doc.addImage(D.pics[j],fmt,px,y,iw,ih,'','MEDIUM');
+          } catch(e){}
+          doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(150,150,150);
+          doc.text('Foto '+(j+1),px+iw/2,y+ih+4,{align:'center'});
+        }
+        y+=ih+10;
+      }
+
+      var np2=doc.internal.getNumberOfPages();
+      for (var pg=1;pg<=np2;pg++) {
+        doc.setPage(pg); doc.setFillColor(26,86,219); doc.rect(0,PH-9,210,9,'F');
+        doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(200,220,255);
+        doc.text('Anfahrschaden EÜ  |  '+t,ML,PH-3);
+        doc.text('Seite '+pg+'/'+np2,192,PH-3,{align:'right'});
+      }
+
+      doc.output('dataurlnewwindow');
+      document.getElementById('spinner').className='';
+      btn.disabled=false;
+    } catch(err) {
+      document.getElementById('spinner').className='';
+      btn.disabled=false;
+      alert('Fehler: '+err.message);
+    }
+  }, 100);
+}
+
+// -- Mail (separate button, direct tap = iOS allows it) ----
+function openMail() {
+  var t = getTS();
+  var cfg = CFG[D.res] || { lbl:'-' };
+  var subject = 'Erstbeurteilung Anfahrschaden EÜ - ' + t;
+  var line1 = 'Hallo,';
+  var line2 = 'anbei der Bericht zur Erstbeurteilung eines Anfahrschadens.';
+  var line3 = 'Datum:        ' + t;
+  var line4 = 'Bauwerksart:  ' + (D.bw||'-');
+  var line5 = 'Bewertung:    ' + (cfg.lbl||'-');
+  var line6 = 'Den vollständigen Bericht mit Fotos finden Sie in der angehaengten PDF.';
+  var line7 = '- DB InfraGO AG - ALV KIB';
+  var body = line1 + '%0A%0A' + line2 + '%0A%0A' + line3 + '%0A' + line4 + '%0A' + line5 + '%0A%0A' + line6 + '%0A%0A' + line7;
+  window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + body;
+}
+
+
+function neu(){
+  if(!confirm('Neuen Einsatz starten? Alle Daten werden gelöscht.')) return;
+  D={bw:null,sd:[],gl:null,res:null,pics:[]};
+  document.getElementById('NT').value='';
+  var opts=document.querySelectorAll('.opt');
+  for(var i=0;i<opts.length;i++) opts[i].className='opt';
+  document.getElementById('PG').innerHTML='';
+  show(0);
+}
+</script>
+
+</body>
+</html>
