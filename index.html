@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -49,7 +48,6 @@ h2 { font-size: 20px; color: #111; margin-bottom: 18px; }
 .btn:active { opacity: .75; }
 .blue { background: #1a56db; color: #fff; }
 .green { background: #16a34a; color: #fff; }
-.mail { background: #7c3aed; color: #fff; }
 .gray { background: #f3f4f6; color: #1f2937; }
 .badge { display: inline-block; padding: 8px 18px; border-radius: 100px;
          font-size: 14px; font-weight: bold; margin-bottom: 14px; border: 2px solid; }
@@ -88,20 +86,21 @@ textarea:focus { border-color: #1a56db; }
 .stbl td { padding: 9px 0; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
 .stbl td:first-child { color: #6b7280; width: 38%; padding-right: 10px; }
 .stbl td:last-child { color: #111; font-weight: bold; }
-.hint { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
-        padding: 12px 14px; margin-bottom: 16px; font-size: 13px; color: #1e40af; line-height: 1.5; }
 .sep { height: 1px; background: #f3f4f6; margin: 14px 0; }
-#spinner { display:none; position:fixed; inset:0; background:rgba(255,255,255,.85);
+
+/* Spinner overlay */
+#spinner { display:none; position:fixed; inset:0; background:rgba(255,255,255,.9);
            align-items:center; justify-content:center; flex-direction:column; z-index:999; }
 #spinner.on { display:flex; }
-.spin-ring { width:48px; height:48px; border:5px solid #dbeafe; border-top-color:#1a56db;
-             border-radius:50%; animation:spin .8s linear infinite; margin-bottom:14px; }
+.spin-ring { width:52px; height:52px; border:5px solid #dbeafe; border-top-color:#1a56db;
+             border-radius:50%; animation:spin .8s linear infinite; margin-bottom:16px; }
 @keyframes spin { to { transform:rotate(360deg); } }
+#spin-txt { font-size:15px; color:#1a56db; font-weight:bold; }
 </style>
 </head>
 <body>
 
-<div id="spinner"><div class="spin-ring"></div><div style="font-size:15px;color:#1a56db;font-weight:bold;">PDF wird erstellt…</div></div>
+<div id="spinner"><div class="spin-ring"></div><div id="spin-txt">PDF wird erstellt…</div></div>
 
 <div class="hdr">
   <div class="hdr-sub">DB InfraGO · ALV KIB</div>
@@ -109,8 +108,6 @@ textarea:focus { border-color: #1a56db; }
   <div class="pbar"><div class="pfill" id="PF" style="width:0%"></div></div>
   <div class="plbl" id="PL">Schritt 0 / 5</div>
 </div>
-
-<!-- S0 -->
 
 <div class="pg on" id="p0">
   <div class="hero">
@@ -121,8 +118,6 @@ textarea:focus { border-color: #1a56db; }
   <div class="info">Ziel ist die Gefahrenabwehr sowie die verantwortbare Aufrechterhaltung bzw. zügige Wiederaufnahme des Betriebs. Die fachliche Nachprüfung erfolgt durch den ALV KIB.</div>
   <button class="btn blue" onclick="show(1)">Einsatz starten &#8594;</button>
 </div>
-
-<!-- S1 -->
 
 <div class="pg" id="p1">
   <div class="tag">Schritt 1 · Klassifizierung</div>
@@ -139,8 +134,6 @@ textarea:focus { border-color: #1a56db; }
   <button class="btn blue" onclick="show(2)">Weiter &#8594;</button>
   <button class="btn gray" onclick="show(0)">&#8592; Zurück</button>
 </div>
-
-<!-- S2 -->
 
 <div class="pg" id="p2">
   <div class="tag">Schritt 2 · Schadensbild</div>
@@ -167,8 +160,6 @@ textarea:focus { border-color: #1a56db; }
   <button class="btn gray" onclick="show(1)">&#8592; Zurück</button>
 </div>
 
-<!-- S3 -->
-
 <div class="pg" id="p3">
   <div class="tag">Schritt 3 · Gleislage</div>
   <h2>Gleislage &amp; Bewertung</h2>
@@ -182,8 +173,6 @@ textarea:focus { border-color: #1a56db; }
   <button class="btn gray" onclick="show(2)">&#8592; Zurück</button>
 </div>
 
-<!-- S4 -->
-
 <div class="pg" id="p4">
   <div class="tag">Schritt 4 · Ergebnis</div>
   <h2>Bewertungsergebnis</h2>
@@ -192,8 +181,6 @@ textarea:focus { border-color: #1a56db; }
   <button class="btn blue" onclick="show(5)">Dokumentation erfassen &#8594;</button>
   <button class="btn gray" onclick="show(3)">&#8592; Zurück</button>
 </div>
-
-<!-- S5 -->
 
 <div class="pg" id="p5">
   <div class="tag">Schritt 5 · Dokumentation</div>
@@ -212,8 +199,6 @@ textarea:focus { border-color: #1a56db; }
   <button class="btn gray" onclick="show(4)">&#8592; Zurück</button>
 </div>
 
-<!-- S6 -->
-
 <div class="pg" id="p6">
   <div class="tag">Zusammenfassung &amp; Export</div>
   <h2>Bericht</h2>
@@ -222,9 +207,16 @@ textarea:focus { border-color: #1a56db; }
     <div class="ctitle">Erfasste Daten</div>
     <table class="stbl" id="ST"></table>
   </div>
-  <div class="hint">&#128247; Fotos können nicht automatisch angehängt werden – bitte nach dem Öffnen der Mail manuell hinzufügen.</div>
-  <button class="btn green" id="PB" onclick="makePDF()">&#128196; PDF herunterladen</button>
-  <button class="btn mail" id="MB" onclick="openMail()">&#9993;&#65039; Per Mail senden</button>
+
+  <!-- Single button: PDF download → then auto-open mail -->
+  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px;margin-bottom:16px;font-size:14px;color:#166534;line-height:1.6;">
+    <strong>So funktioniert der Export:</strong><br>
+    1. PDF wird heruntergeladen<br>
+    2. Mail-App öffnet sich automatisch<br>
+    3. PDF manuell anhängen &amp; senden
+  </div>
+
+  <button class="btn green" id="PB" onclick="exportAndMail()">&#128196; PDF laden &amp; Mail öffnen</button>
   <button class="btn gray" onclick="show(5)">&#8592; Zurück / Fotos ergänzen</button>
   <button class="btn gray" onclick="neu()">&#128260; Neuen Einsatz starten</button>
 </div>
@@ -262,21 +254,21 @@ function chk(id, val, el) {
 }
 
 var CFG = {
-  G:  { bc:'bred',    lbl:'Gefährdung festgestellt',    emoji:'Rot',
+  G:  { bc:'bred',    lbl:'Gefährdung festgestellt',
         m:[{t:'Bahnbetrieb sofort einstellen',g:'SOFORT',c:'tred'},
            {t:'ALV KIB unverzüglich benachrichtigen',g:'SOFORT',c:'tred'},
            {t:'Unfallstelle sichern und absperren',g:'SOFORT',c:'tred'},
            {t:'Vollständige Dokumentation erstellen',g:'DOKUMENTIEREN',c:'tblue'}]},
-  E:  { bc:'byellow', lbl:'Einschränkung erforderlich', emoji:'Gelb',
+  E:  { bc:'byellow', lbl:'Einschränkung erforderlich',
         m:[{t:'Geschwindigkeitsbeschränkung einführen',g:'PRÜFEN',c:'tyellow'},
            {t:'Strukturelle Prüfung durch Fachmann',g:'PRÜFEN',c:'tyellow'},
            {t:'Schadensbild dokumentieren',g:'DOKUMENTIEREN',c:'tblue'},
            {t:'ALV KIB informieren',g:'DOKUMENTIEREN',c:'tblue'}]},
-  D2: { bc:'byellow', lbl:'Dokumentation erforderlich', emoji:'Orange',
+  D2: { bc:'byellow', lbl:'Dokumentation erforderlich',
         m:[{t:'Schäden vollständig fotografisch dokumentieren',g:'DOKUMENTIEREN',c:'tblue'},
            {t:'Weiteren Verlauf beobachten',g:'PRÜFEN',c:'tyellow'},
            {t:'Meldung an ALV KIB zur nachgelagerten Prüfung',g:'DOKUMENTIEREN',c:'tblue'}]},
-  U:  { bc:'bgreen',  lbl:'Kein kritischer Befund',     emoji:'Grün',
+  U:  { bc:'bgreen',  lbl:'Kein kritischer Befund',
         m:[{t:'Bahnbetrieb kann aufrechterhalten werden',g:'OK',c:'tblue'},
            {t:'Einsatz dokumentieren',g:'DOKUMENTIEREN',c:'tblue'},
            {t:'Routinemeldung an ALV KIB',g:'DOKUMENTIEREN',c:'tblue'}]}
@@ -345,69 +337,43 @@ function buildSum(){
   document.getElementById('ST').innerHTML=h;
 }
 
-// ── Mail Export ───────────────────────────────────────────
-function openMail() {
-  var t = getTS();
-  var cfg = CFG[D.res] || { lbl:'-', m:[] };
-  var nt = document.getElementById('NT').value.trim() || '-';
-  var sd = D.sd.length ? D.sd.join(', ') : 'Keine Schäden';
-
-  var subject = 'Erstbeurteilung Anfahrschaden EÜ – ' + t;
-
-  var body = 'ERSTBEURTEILUNG ANFAHRSCHADEN EISENBAHNÜBERFÜHRUNG\n';
-  body += '==================================================\n\n';
-  body += 'Datum / Uhrzeit:  ' + t + '\n\n';
-  body += 'BAUWERK\n';
-  body += 'Bauwerksart:      ' + (D.bw||'-') + '\n';
-  body += 'Gleislage:        ' + (D.gl||'-') + '\n';
-  body += 'Schadensbild:     ' + sd + '\n\n';
-  body += 'BEWERTUNG\n';
-  body += cfg.lbl + '\n\n';
-  body += 'EMPFOHLENE MASSNAHMEN\n';
-  for (var i=0;i<cfg.m.length;i++) {
-    body += '- ' + cfg.m[i].t + ' [' + cfg.m[i].g + ']\n';
-  }
-  body += '\nNOTIZEN\n' + nt + '\n\n';
-  body += 'Fotos: ' + D.pics.length + ' Foto(s) – bitte manuell anhängen\n\n';
-  body += '--\nDB InfraGO AG · ALV KIB · Erstbeurteilung Anfahrschaden EÜ';
-
-  window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-}
-
-// ── PDF Export ────────────────────────────────────────────
-function makePDF() {
+// ── Combined: PDF → then Mail ─────────────────────────────
+function exportAndMail() {
   var btn = document.getElementById('PB');
   btn.disabled = true;
   document.getElementById('spinner').className = 'on';
+  document.getElementById('spin-txt').textContent = 'PDF wird erstellt…';
 
   if (window.jspdf && window.jspdf.jsPDF) {
-    generatePDF(btn);
+    runExport(btn);
     return;
   }
   var s = document.createElement('script');
   s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-  s.onload = function() { generatePDF(btn); };
+  s.onload = function() { runExport(btn); };
   s.onerror = function() {
     document.getElementById('spinner').className = '';
     btn.disabled = false;
-    alert('PDF benötigt Internet. Bitte WLAN aktivieren und erneut versuchen.');
+    alert('PDF benötigt Internet. Bitte WLAN aktivieren.');
   };
   document.head.appendChild(s);
 }
 
-function generatePDF(btn) {
+function runExport(btn) {
   setTimeout(function() {
     try {
-      var jsPDF = window.jspdf.jsPDF;
-      var doc = new jsPDF({ unit:'mm', format:'a4' });
       var t = getTS();
       var cfg = CFG[D.res] || { lbl:'-', m:[] };
       var nt = document.getElementById('NT').value.trim();
+      var filename = 'Anfahrschaden_'+new Date().toISOString().slice(0,10)+'.pdf';
+
+      // Build PDF
+      var jsPDF = window.jspdf.jsPDF;
+      var doc = new jsPDF({ unit:'mm', format:'a4' });
       var ML=18, CW=174, PH=297, y=0;
 
       function np(n) { if (y+n > PH-18) { doc.addPage(); y=18; } }
 
-      // Header
       doc.setFillColor(26,86,219); doc.rect(0,0,210,20,'F');
       doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(255,255,255);
       doc.text('Anfahrschaden Eisenbahnueberfuehrung', ML, 13);
@@ -415,7 +381,6 @@ function generatePDF(btn) {
       doc.text(t, 192, 7, {align:'right'});
       y = 28;
 
-      // Badge
       var bc={G:[220,38,38],E:[217,119,6],D2:[217,119,6],U:[22,163,74]};
       var c=bc[D.res]||[100,100,100];
       doc.setFillColor(c[0],c[1],c[2]); doc.roundedRect(ML,y,CW,11,3,3,'F');
@@ -424,16 +389,13 @@ function generatePDF(btn) {
       y+=18;
 
       function sec(title) {
-        np(10);
-        doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(26,86,219);
-        doc.text(title, ML, y);
-        doc.setDrawColor(26,86,219); doc.setLineWidth(0.3);
+        np(10); doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(26,86,219);
+        doc.text(title,ML,y); doc.setDrawColor(26,86,219); doc.setLineWidth(0.3);
         doc.line(ML,y+2,ML+CW,y+2); y+=8;
       }
       function row(k,v) {
-        np(8);
-        doc.setFont('helvetica','normal'); doc.setFontSize(10);
-        doc.setTextColor(120,120,120); doc.text(k, ML, y);
+        np(8); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+        doc.setTextColor(120,120,120); doc.text(k,ML,y);
         doc.setTextColor(30,30,30); doc.setFont('helvetica','bold');
         var ls=doc.splitTextToSize(String(v),CW-55);
         doc.text(ls,ML+55,y); y+=Math.max(7,ls.length*5.5);
@@ -446,8 +408,7 @@ function generatePDF(btn) {
 
       sec('EMPFOHLENE MASSNAHMEN');
       for (var i=0;i<cfg.m.length;i++) {
-        np(8);
-        doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(30,30,30);
+        np(8); doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(30,30,30);
         var ls=doc.splitTextToSize('- '+cfg.m[i].t+' ['+cfg.m[i].g+']',CW-8);
         doc.text(ls,ML+4,y); y+=Math.max(7,ls.length*5.5);
       }
@@ -481,22 +442,45 @@ function generatePDF(btn) {
 
       var np2=doc.internal.getNumberOfPages();
       for (var pg=1;pg<=np2;pg++) {
-        doc.setPage(pg);
-        doc.setFillColor(26,86,219); doc.rect(0,PH-9,210,9,'F');
+        doc.setPage(pg); doc.setFillColor(26,86,219); doc.rect(0,PH-9,210,9,'F');
         doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(200,220,255);
-        doc.text('Anfahrschaden EUe  |  '+t, ML, PH-3);
-        doc.text('Seite '+pg+'/'+np2, 192, PH-3, {align:'right'});
+        doc.text('Anfahrschaden EUe  |  '+t,ML,PH-3);
+        doc.text('Seite '+pg+'/'+np2,192,PH-3,{align:'right'});
       }
 
-      doc.save('Anfahrschaden_'+new Date().toISOString().slice(0,10)+'.pdf');
-      document.getElementById('spinner').className='';
-      btn.disabled=false;
+      // Save PDF
+      doc.save(filename);
+
+      // Update spinner text
+      document.getElementById('spin-txt').textContent = 'Mail wird geöffnet…';
+
+      // Open mail after short delay (let PDF save complete)
+      setTimeout(function() {
+        document.getElementById('spinner').className = '';
+        btn.disabled = false;
+        openMail(t, cfg, filename);
+      }, 1500);
+
     } catch(err) {
-      document.getElementById('spinner').className='';
-      btn.disabled=false;
+      document.getElementById('spinner').className = '';
+      btn.disabled = false;
       alert('Fehler: '+err.message);
     }
   }, 100);
+}
+
+function openMail(t, cfg, filename) {
+  var subject = 'Erstbeurteilung Anfahrschaden EÜ – ' + t;
+  var body = 'Hallo,\n\n'
+    + 'anbei der Bericht zur Erstbeurteilung eines Anfahrschadens an einer Eisenbahnüberführung.\n\n'
+    + 'Datum:        ' + t + '\n'
+    + 'Bauwerksart:  ' + (D.bw||'-') + '\n'
+    + 'Bewertung:    ' + (cfg.lbl||'-') + '\n\n'
+    + 'Den vollständigen Bericht mit Fotos und Maßnahmen finden Sie in der angehängten PDF-Datei.\n\n'
+    + 'Bitte die PDF-Datei "' + filename + '" manuell anhängen.\n\n'
+    + '– DB InfraGO AG · ALV KIB';
+
+  window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 
 function neu(){
@@ -509,6 +493,5 @@ function neu(){
   show(0);
 }
 </script>
-
 </body>
 </html>
