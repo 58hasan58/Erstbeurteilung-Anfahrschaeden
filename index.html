@@ -111,9 +111,11 @@ textarea:focus { border-color: #1a56db; }
 
 <div class="pg on" id="p0">
   <div class="hero">
-    <div class="hero-icon">&#128679;</div>
-    <div class="hero-t">Erstbeurteilung Anfahrschaden Eisenbahnüberführung</div>
-    <div class="hero-p">Unterstützt den Notfallmanager bei der strukturierten Erstbeurteilung von Anfahrschäden.</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <div class="hero-t" style="margin-bottom:0;">Erstbeurteilung Anfahrschaden Eisenbahnüberführung</div>
+      <div style="font-size:32px;flex-shrink:0;">&#128679;</div>
+    </div>
+    <div class="hero-p" style="margin-top:8px;">Unterstützt den Notfallmanager bei der strukturierten Erstbeurteilung von Anfahrschäden.</div>
   </div>
   <div class="info">Ziel ist die Gefahrenabwehr sowie die verantwortbare Aufrechterhaltung bzw. zügige Wiederaufnahme des Betriebs. Die fachliche Nachprüfung erfolgt durch den ALV KIB.</div>
   <button class="btn blue" onclick="show(1)">Einsatz starten &#8594;</button>
@@ -263,42 +265,38 @@ function chk(id, val, el) {
 }
 
 var CFG = {
-  G:  { bc:'bred',    lbl:'Gefaehrdung festgestellt',
-        m:[{t:'Bahnbetrieb sofort einstellen',g:'SOFORT',c:'tred'},
-           {t:'ALV KIB unverzueglich benachrichtigen',g:'SOFORT',c:'tred'},
-           {t:'Unfallstelle sichern und absperren',g:'SOFORT',c:'tred'},
-           {t:'Vollstaendige Dokumentation erstellen',g:'DOKUMENTIEREN',c:'tblue'}]},
-  E:  { bc:'byellow', lbl:'Einschraenkung erforderlich',
-        m:[{t:'Geschwindigkeitsbeschraenkung einfuehren',g:'PRUeFEN',c:'tyellow'},
-           {t:'Strukturelle Pruefung durch Fachmann',g:'PRUeFEN',c:'tyellow'},
-           {t:'Schadensbild dokumentieren',g:'DOKUMENTIEREN',c:'tblue'},
-           {t:'ALV KIB informieren',g:'DOKUMENTIEREN',c:'tblue'}]},
-  D2: { bc:'byellow', lbl:'Dokumentation erforderlich',
-        m:[{t:'Schaeden vollstaendig fotografisch dokumentieren',g:'DOKUMENTIEREN',c:'tblue'},
-           {t:'Weiteren Verlauf beobachten',g:'PRUeFEN',c:'tyellow'},
-           {t:'Meldung an ALV KIB zur nachgelagerten Pruefung',g:'DOKUMENTIEREN',c:'tblue'}]},
-  U:  { bc:'bgreen',  lbl:'Kein kritischer Befund',
-        m:[{t:'Bahnbetrieb kann aufrechterhalten werden',g:'OK',c:'tblue'},
-           {t:'Einsatz dokumentieren',g:'DOKUMENTIEREN',c:'tblue'},
-           {t:'Routinemeldung an ALV KIB',g:'DOKUMENTIEREN',c:'tblue'}]}
+  S3: { bc:'bred', lbl:'Szenario 3 - Betrieb entsprechend behandeln',
+        m:[{t:'Betrieb ist entsprechend zu behandeln',g:'SOFORT',c:'tred'},
+           {t:'ALV KIB ist unverzueglich einzubinden',g:'SOFORT',c:'tred'},
+           {t:'Fotodokumentation (Uebersicht und Details)',g:'DOKUMENTIEREN',c:'tblue'},
+           {t:'Kurzbeschreibung des Schadensbildes erstellen',g:'DOKUMENTIEREN',c:'tblue'}]},
+  S12: { bc:'bgreen', lbl:'Szenario 1/2 - Betrieb kann aufrechterhalten werden',
+        m:[{t:'Betrieb kann aufrechterhalten bzw. wieder aufgenommen werden',g:'OK',c:'tblue'},
+           {t:'Fotodokumentation (Uebersicht und Details)',g:'DOKUMENTIEREN',c:'tblue'},
+           {t:'Kurzbeschreibung des Schadensbildes erstellen',g:'DOKUMENTIEREN',c:'tblue'},
+           {t:'Information des ALV KIB zur zeitnahen Nachpruefung',g:'DOKUMENTIEREN',c:'tblue'}]}
 };
 
 function doResult() {
   var s = D.sd;
-  var crit = ['Freiliegende Bewehrung','Verformungen','Auffaellige Rissbildungen'];
-  var hasCrit = false;
-  for (var i=0;i<crit.length;i++) if (s.indexOf(crit[i])!==-1){hasCrit=true;break;}
-  if (D.gl==='Auffaellig'||hasCrit) D.res='G';
-  else if (s.indexOf('Groessere Abplatzungen')!==-1) D.res='E';
-  else if (s.length>0) D.res='D2';
-  else D.res='U';
+  var s3list = ['Groessere Abplatzungen','Freiliegende Bewehrung','Verformungen','Auffaellige Rissbildungen'];
+  var isS3 = false;
+  for (var i=0;i<s3list.length;i++) if (s.indexOf(s3list[i])!==-1){isS3=true;break;}
+  if (D.gl==='Auffaellig'||isS3) D.res='S3';
+  else D.res='S12';
 
   var cfg = CFG[D.res];
   var h = '<div class="badge '+cfg.bc+'">'+cfg.lbl+'</div>';
-  h += '<div class="card"><div class="ctitle">Empfohlene Massnahmen</div>';
+  if (D.bw === 'Stahl') {
+    h += '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:13px;color:#92400e;">&#9888; <strong>Stahlbruecke:</strong> Erhoehte Aufmerksamkeit erforderlich. Sorgfaeltige Sichtpruefung auf Verformungen und Risse.</div>';
+  }
+  h += '<div class="card"><div class="ctitle">Empfohlene Massnahmen (gem. Handlungsanweisung)</div>';
   for (var j=0;j<cfg.m.length;j++) {
     h += '<div class="mrow"><div class="mtxt">'+cfg.m[j].t+'<br><span class="mtag '+cfg.m[j].c+'">'+cfg.m[j].g+'</span></div></div>';
   }
+  h += '</div>';
+  h += '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:11px 13px;font-size:12px;color:#6b7280;line-height:1.6;">';
+  h += '<strong style="color:#111;">Hinweis:</strong> Der Notfallmanager trifft keine detaillierte fachtechnische Bewertung, sondern eine verantwortbare Erstentscheidung auf Grundlage sichtbarer Merkmale. Die fachliche Nachpruefung erfolgt durch den ALV KIB.';
   h += '</div>';
   document.getElementById('RA').innerHTML = h;
   show(4);
